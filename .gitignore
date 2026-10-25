@@ -1,1 +1,9 @@
-./youtube-queue
+/youtube-flow/
+node_modules/
+.output/
+.wxt/
+.claude/
+.scratch/
+docs/agents/
+CLAUDE.md
+*.log

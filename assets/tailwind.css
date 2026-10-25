@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+/* Tokens as CSS variables so the theme can flip at runtime via <html data-theme>. */
+:root, :root[data-theme="dark"] {
+  --ground: #101114; --surface: #17181C; --raised: #1E2026; --hover: #1A1B20; --line: #1E2026; --chip: #26282E;
+  --border: #2A2C33; --border-hi: #363944;
+  --text: #ECEDF1; --muted: #A3A6B1; --faint: #8C8F9B;
+  --accent: #9AA8FF; --on-accent: #101114; --accent-soft: rgba(154,168,255,.16);
+  --good: #6FD39A; --warn: #F2B85A; --warn-text: #F2C27A;
+  color-scheme: dark;
+}
+:root[data-theme="light"] {
+  --ground: #F6F6F8; --surface: #FFFFFF; --raised: #EEEFF3; --hover: #EEEFF3; --line: #E6E7EC; --chip: #E6E7EC;
+  --border: #DDDFE6; --border-hi: #C6C9D3;
+  --text: #15161A; --muted: #5B5F6B; --faint: #7A7E8A;
+  --accent: #4F62F2; --on-accent: #FFFFFF; --accent-soft: rgba(79,98,242,.12);
+  --good: #2E9E63; --warn: #C98A1E; --warn-text: #A8720F;
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-ground: var(--ground); --color-surface: var(--surface); --color-raised: var(--raised);
+  --color-hover: var(--hover); --color-line: var(--line); --color-chip: var(--chip);
+  --color-border: var(--border); --color-border-hi: var(--border-hi);
+  --color-text: var(--text); --color-muted: var(--muted); --color-faint: var(--faint);
+  --color-accent: var(--accent); --color-on-accent: var(--on-accent); --color-accent-soft: var(--accent-soft);
+  --color-good: var(--good); --color-warn: var(--warn); --color-warn-text: var(--warn-text);
+  --font-sans: Geist, ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
+  --ease-out-soft: cubic-bezier(.2,.8,.2,1);
+}
+
+body { margin: 0; background: var(--color-ground); color: var(--color-text); font-family: var(--font-sans); font-size: 14px; line-height: 1.5; }
+button { font: inherit; cursor: pointer; color: inherit; }
+input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.btn { transition: transform .14s var(--ease-out-soft), background-color .16s, border-color .16s, filter .16s; }
+.btn:active { transform: scale(.97); }
+.btn:disabled { opacity: .55; cursor: default; transform: none; }
+.ghost { background: var(--color-hover); border: 1px solid var(--color-border); color: var(--color-text); }
+.ghost:hover:not(:disabled) { background: var(--color-chip); border-color: var(--color-border-hi); }
+.primary { background: var(--color-accent); color: var(--color-on-accent); font-weight: 600; }
+.primary:hover:not(:disabled) { filter: brightness(1.07); }
+.field { background: var(--color-hover); border: 1px solid var(--color-border); border-radius: 8px; padding: 6px 10px; outline: none; }
+.field:focus { border-color: var(--color-accent); }
+.rise { animation: rise .38s var(--ease-out-soft) both; }
+@keyframes rise { from { opacity: 0; transform: translateY(10px) scale(.985); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .btn { transition: none; } .rise { animation: none; } }

@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Process queue</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@500&amp;display=swap">
+<style>
+body{margin:0;background:#101114}
+a{color:#A3A6B1}a:hover{color:#ECEDF1}
+.btn{cursor:pointer;transition:transform .14s cubic-bezier(.2,.8,.2,1),background-color .16s ease,border-color .16s ease,filter .16s ease}
+.btn:active{transform:scale(.97)}
+.ghost:hover{background-color:#22242A !important;border-color:#363944 !important}
+.primary:hover{filter:brightness(1.07)}
+.row:hover{background-color:#1A1B20 !important}
+.navlink:hover{background-color:#1A1B20}
+.card{animation:rise .38s cubic-bezier(.2,.8,.2,1) both}
+.reveal{animation:rise .3s cubic-bezier(.2,.8,.2,1) both}
+.toast{animation:slide .28s cubic-bezier(.2,.8,.2,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes slide{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.card,.reveal,.toast{animation:none}.btn{transition:none}}
+button:focus-visible,a:focus-visible{outline:2px solid #9AA8FF;outline-offset:2px}
+</style>
+</helmet>
+<div style="min-height:960px;background:#101114;color:#ECEDF1;font-family:Geist,ui-sans-serif,system-ui,sans-serif;font-size:14px;line-height:1.5">
+<header style="border-bottom:1px solid #1E2026">
+<div style="max-width:1120px;margin:0 auto;padding:14px max(16px, env(safe-area-inset-right, 0px)) 14px max(16px, env(safe-area-inset-left, 0px));display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px">
+<div style="display:flex;align-items:center;gap:10px">
+<div style="width:28px;height:28px;border-radius:8px;background:{{accent}};display:flex;align-items:center;justify-content:center">
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#101114" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 4h10M3 8h10M3 12h6"></path></svg>
+</div>
+<span style="font-weight:600;font-size:15px;letter-spacing:-0.01em">Queue</span>
+</div>
+<nav aria-label="Main" style="display:flex;flex-wrap:wrap;gap:2px">
+<a href="Main.dc.html" aria-current="page" class="navlink" style="padding:6px 12px;border-radius:8px;background:#1E2026;color:#ECEDF1;text-decoration:none;font-weight:500">Process</a>
+<a href="Queues.dc.html" class="navlink" style="padding:6px 12px;border-radius:8px;color:#A3A6B1;text-decoration:none;font-weight:500">Queues</a>
+<a href="#archive" class="navlink" style="padding:6px 12px;border-radius:8px;color:#A3A6B1;text-decoration:none;font-weight:500">Archive</a>
+<a href="#stats" class="navlink" style="padding:6px 12px;border-radius:8px;color:#A3A6B1;text-decoration:none;font-weight:500">Stats</a>
+<a href="#settings" class="navlink" style="padding:6px 12px;border-radius:8px;color:#A3A6B1;text-decoration:none;font-weight:500">Settings</a>
+</nav>
+<span style="margin-left:auto;display:inline-flex;align-items:center;gap:8px;padding:4px 10px;border:1px solid #2A2C33;border-radius:999px;font-size:12.5px;color:#A3A6B1"><span style="width:6px;height:6px;border-radius:50%;background:#6FD39A"></span>Intercept on</span>
+</div>
+</header>
+<main style="max-width:1120px;margin:0 auto;padding:32px max(16px, env(safe-area-inset-right, 0px)) 64px max(16px, env(safe-area-inset-left, 0px));display:flex;flex-wrap:wrap;gap:40px;align-items:flex-start">
+<section aria-label="Decision" style="flex:999 1 560px;min-width:0;display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px">
+<div>
+<p style="margin:0;color:#8C8F9B;font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase">Processing</p>
+<h1 style="margin:2px 0 0;font-size:30px;font-weight:600;letter-spacing:-0.025em">Inbox</h1>
+</div>
+<div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+<span style="font-size:13px;color:#A3A6B1;font-variant-numeric:tabular-nums">{{remainingLabel}}</span>
+<div style="width:180px;height:4px;border-radius:4px;background:#1E2026;overflow:hidden"><div style="{{progressStyle}}"></div></div>
+</div>
+</div>
+<sc-if value="{{hasCur}}" hint-placeholder-val="{{true}}">
+<article class="card" aria-label="Current video" style="background:#17181C;border:1px solid #24262C;border-radius:16px;overflow:hidden">
+<div style="{{cur.thumbStyle}}">
+<div style="width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center">
+<svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M7 4.5v13l11-6.5z" fill="#FFFFFF"></path></svg>
+</div>
+<span style="position:absolute;right:12px;bottom:12px;padding:2px 8px;border-radius:6px;background:rgba(0,0,0,.66);color:#FFFFFF;font-family:'Geist Mono',ui-monospace,monospace;font-size:12px">{{cur.dur}}</span>
+</div>
+<div style="padding:20px 24px 24px;display:flex;flex-direction:column;gap:6px">
+<h2 style="margin:0;font-size:21px;font-weight:600;letter-spacing:-0.015em;text-wrap:balance">{{cur.title}}</h2>
+<p style="margin:0;color:#A3A6B1;font-size:13.5px">{{cur.channel}} · {{cur.dur}} · {{cur.age}}</p>
+<sc-if value="{{noSummary}}" hint-placeholder-val="{{true}}">
+<div style="margin-top:14px">
+<button class="btn ghost" onClick="{{toggleSummary}}" style="display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:10px;border:1px solid #2A2C33;background:#1A1B20;color:#ECEDF1;font:inherit;font-weight:500">
+<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M8 1.5l1.6 4.2 4.4 1.3-4.4 1.3L8 12.5 6.4 8.3 2 7l4.4-1.3z"></path><path d="M13 11.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z"></path></svg>
+Summarize<span style="color:#8C8F9B;font-weight:400">· Claude</span>
+</button>
+</div>
+</sc-if>
+<sc-if value="{{summary}}" hint-placeholder-val="{{false}}">
+<div class="reveal" style="margin-top:14px;padding:16px 18px;border-radius:12px;background:#1C1D22;border:1px solid #2A2C33;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px">
+<span style="font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#8C8F9B">AI summary · Claude</span>
+<span style="{{cur.verdictStyle}}">{{cur.verdict}}</span>
+</div>
+<p style="margin:0;font-size:15px;font-weight:500;line-height:1.45">{{cur.tldr}}</p>
+<ul style="margin:0;padding-left:18px;color:#C9CBD3;display:flex;flex-direction:column;gap:4px">
+<sc-for list="{{cur.points}}" as="p" hint-placeholder-count="3"><li>{{p}}</li></sc-for>
+</ul>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<sc-for list="{{cur.stamps}}" as="s" hint-placeholder-count="3"><span style="display:inline-flex;gap:8px;align-items:baseline;padding:4px 10px;border-radius:7px;background:#24262C;font-size:12.5px;color:#C9CBD3"><span style="font-family:'Geist Mono',ui-monospace,monospace;color:#ECEDF1">{{s.t}}</span>{{s.label}}</span></sc-for>
+</div>
+<p style="margin:0;color:#A3A6B1;font-size:13px">{{cur.why}}</p>
+</div>
+</sc-if>
+</div>
+</article>
+<div style="display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));gap:10px">
+<button class="btn ghost" onClick="{{drop}}" style="height:52px;display:flex;align-items:center;justify-content:center;gap:10px;border-radius:12px;border:1px solid #2A2C33;background:#17181C;color:#ECEDF1;font:inherit;font-weight:500">Drop<span style="font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;padding:1px 6px;border-radius:5px;border:1px solid #363944;color:#A3A6B1">D</span></button>
+<button class="btn ghost" onClick="{{keep}}" style="height:52px;display:flex;align-items:center;justify-content:center;gap:10px;border-radius:12px;border:1px solid #2A2C33;background:#17181C;color:#ECEDF1;font:inherit;font-weight:500">Keep<span style="font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;padding:1px 6px;border-radius:5px;border:1px solid #363944;color:#A3A6B1">K</span></button>
+<button class="btn ghost" onClick="{{toggleMove}}" aria-expanded="{{moveOpen}}" style="height:52px;display:flex;align-items:center;justify-content:center;gap:10px;border-radius:12px;border:1px solid #2A2C33;background:#17181C;color:#ECEDF1;font:inherit;font-weight:500">Move<span style="font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;padding:1px 6px;border-radius:5px;border:1px solid #363944;color:#A3A6B1">M</span></button>
+<button class="btn primary" onClick="{{watch}}" style="height:52px;display:flex;align-items:center;justify-content:center;gap:10px;border-radius:12px;border:1px solid transparent;background:{{accent}};color:#101114;font:inherit;font-weight:600">Watch<span style="font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;padding:1px 6px;border-radius:5px;border:1px solid rgba(16,17,20,.3);color:#101114">W</span></button>
+</div>
+<sc-if value="{{moveOpen}}" hint-placeholder-val="{{false}}">
+<div class="reveal" style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px;border-radius:12px;background:#17181C;border:1px solid #24262C">
+<span style="font-size:13px;color:#A3A6B1;padding:0 6px">Move to</span>
+<sc-for list="{{moveTargets}}" as="t" hint-placeholder-count="3"><button class="btn ghost" onClick="{{t.pick}}" style="padding:7px 12px;border-radius:9px;border:1px solid #2A2C33;background:#1C1D22;color:#ECEDF1;font:inherit;font-weight:500">{{t.name}}</button></sc-for>
+</div>
+</sc-if>
+</sc-if>
+<sc-if value="{{done}}" hint-placeholder-val="{{false}}">
+<div class="card" style="padding:48px 32px;border-radius:16px;border:1px solid #24262C;background:#17181C;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
+<div style="width:44px;height:44px;border-radius:50%;background:rgba(111,211,154,.14);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#6FD39A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 10.5l3.5 3.5 7.5-8"></path></svg></div>
+<h2 style="margin:6px 0 0;font-size:21px;font-weight:600">Inbox is clear</h2>
+<p style="margin:0;color:#A3A6B1;max-width:44ch">{{doneLine}}</p>
+<button class="btn ghost" onClick="{{reset}}" style="margin-top:10px;padding:9px 14px;border-radius:10px;border:1px solid #2A2C33;background:#1A1B20;color:#ECEDF1;font:inherit;font-weight:500">Reset prototype</button>
+</div>
+</sc-if>
+<sc-if value="{{hasLast}}" hint-placeholder-val="{{false}}">
+<div class="toast" role="status" style="display:flex;align-items:center;gap:12px;padding:10px 10px 10px 16px;border-radius:12px;background:#1E2026;border:1px solid #2C2E36;box-shadow:0 10px 30px rgba(0,0,0,.35)">
+<span style="flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span style="font-weight:500">{{last.text}}</span><span style="color:#A3A6B1"> · {{last.title}}</span></span>
+<button class="btn ghost" onClick="{{undo}}" style="flex:none;padding:6px 12px;border-radius:8px;border:1px solid #2A2C33;background:#24262C;color:#ECEDF1;font:inherit;font-weight:500">Undo</button>
+</div>
+</sc-if>
+</section>
+<aside aria-label="Up next" style="flex:1 1 260px;min-width:0;display:flex;flex-direction:column;gap:28px">
+<div>
+<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px">
+<h2 style="margin:0;font-size:14px;font-weight:600">Up next</h2>
+<span style="font-size:12.5px;color:#8C8F9B">Click to jump</span>
+</div>
+<ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px">
+<sc-for list="{{upNext}}" as="u" hint-placeholder-count="4"><li><button class="btn row" onClick="{{u.jump}}" style="width:100%;display:flex;gap:12px;align-items:center;padding:8px;border-radius:10px;border:none;background:transparent;color:inherit;font:inherit;text-align:left"><span style="{{u.thumbStyle}}"></span><span style="min-width:0;display:flex;flex-direction:column"><span style="font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{u.title}}</span><span style="font-size:12.5px;color:#8C8F9B">{{u.channel}} · {{u.dur}}</span></span></button></li></sc-for>
+</ol>
+<sc-if value="{{upNextEmpty}}" hint-placeholder-val="{{false}}"><p style="margin:0;padding:8px;color:#8C8F9B;font-size:13px">Nothing after this one.</p></sc-if>
+</div>
+<div>
+<h2 style="margin:0 0 10px;font-size:14px;font-weight:600">This session</h2>
+<dl style="margin:0;display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:8px">
+<div style="padding:12px;border-radius:10px;background:#17181C;border:1px solid #24262C"><dt style="font-size:12px;color:#8C8F9B">Watched</dt><dd style="margin:2px 0 0;font-size:20px;font-weight:600;font-variant-numeric:tabular-nums">{{stats.w}}</dd></div>
+<div style="padding:12px;border-radius:10px;background:#17181C;border:1px solid #24262C"><dt style="font-size:12px;color:#8C8F9B">Dropped</dt><dd style="margin:2px 0 0;font-size:20px;font-weight:600;font-variant-numeric:tabular-nums">{{stats.d}}</dd></div>
+<div style="padding:12px;border-radius:10px;background:#17181C;border:1px solid #24262C"><dt style="font-size:12px;color:#8C8F9B">Moved</dt><dd style="margin:2px 0 0;font-size:20px;font-weight:600;font-variant-numeric:tabular-nums">{{stats.m}}</dd></div>
+<div style="padding:12px;border-radius:10px;background:#17181C;border:1px solid #24262C"><dt style="font-size:12px;color:#8C8F9B">Kept</dt><dd style="margin:2px 0 0;font-size:20px;font-weight:600;font-variant-numeric:tabular-nums">{{stats.k}}</dd></div>
+</dl>
+</div>
+</aside>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#9AA8FF","options":["#9AA8FF","#F2A65A","#6FD3C4","#E58FB8"]},"$preview":{"width":1280,"height":960}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { queue: this.sample(), prev: null, last: null, summary: false, moveOpen: false, stats: { w: 0, k: 0, m: 0, d: 0 } };
+  }
+  sample() {
+    return [
+      { id: 'a', title: 'How SQLite stores a table on disk', channel: 'Database Internals', dur: '38:12', age: '12 days in Inbox', tint: '#2E2950',
+        tldr: 'Follows one CREATE TABLE down to the B-tree pages and bytes that hold each row.',
+        points: ['Every table and index is its own B-tree inside one file', 'Rows are packed into fixed-size pages behind a cell pointer array', 'Large values spill into overflow pages'],
+        stamps: [{ t: '02:10', label: 'Page format' }, { t: '14:35', label: 'B-tree splits' }, { t: '31:02', label: 'Overflow pages' }],
+        verdict: 'Worth it', why: 'Dense and concrete. The middle third is the core of it.' },
+      { id: 'b', title: 'Building a collaborative text editor twice', channel: 'Local-first Talks', dur: '51:40', age: '9 days in Inbox', tint: '#1D3833',
+        tldr: 'Compares operational transforms and CRDTs by building the same editor both ways.',
+        points: ['Operational transforms need a server to order edits', 'CRDTs merge offline edits without one', 'Memory overhead is the main CRDT cost'],
+        stamps: [{ t: '05:20', label: 'The problem' }, { t: '22:45', label: 'CRDT version' }, { t: '44:10', label: 'Trade-offs' }],
+        verdict: 'Skim it', why: 'Good ideas, slow pacing. Start at 22:45.' },
+      { id: 'c', title: 'Spring animations, explained', channel: 'Interface Craft', dur: '9:48', age: '6 days in Inbox', tint: '#3D2C22',
+        tldr: 'Why springs feel more natural than fixed-duration easing in interfaces.',
+        points: ['Springs are set by stiffness and damping, not time', 'They retarget smoothly when interrupted', 'Use them for gestures, not for fades'],
+        stamps: [{ t: '01:05', label: 'Easing vs springs' }, { t: '04:30', label: 'Interruptions' }, { t: '07:50', label: 'When not to' }],
+        verdict: 'Worth it', why: 'Short and directly useful.' },
+      { id: 'd', title: 'Every Vim shortcut I use, ranked', channel: 'Terminal Life', dur: '42:00', age: '5 days in Inbox', tint: '#213244',
+        tldr: 'A long personal tour of one developer’s Vim setup.',
+        points: ['Mostly standard motions and text objects', 'The plugin list is in the last ten minutes', 'Little here that the docs don’t cover'],
+        stamps: [{ t: '03:00', label: 'Motions' }, { t: '18:20', label: 'Macros' }, { t: '33:40', label: 'Plugins' }],
+        verdict: 'Skip', why: 'Probably a heat-of-the-moment save.' },
+      { id: 'e', title: 'Inside the Go scheduler', channel: 'Gopher Talks', dur: '27:30', age: '2 days in Inbox', tint: '#1F3B2B',
+        tldr: 'How goroutines are mapped onto OS threads with the G, M and P model.',
+        points: ['Each P holds a local run queue of goroutines', 'Idle Ps steal work from busy ones', 'A blocking syscall hands its P to another thread'],
+        stamps: [{ t: '03:40', label: 'G, M and P' }, { t: '12:15', label: 'Work stealing' }, { t: '21:30', label: 'Syscalls' }],
+        verdict: 'Worth it', why: 'Clear diagrams and well paced throughout.' }
+    ];
+  }
+  decide(kind, target) {
+    const q = this.state.queue;
+    if (!q.length) return;
+    const cur = q[0];
+    const rest = q.slice(1);
+    const stats = Object.assign({}, this.state.stats);
+    stats[kind] = stats[kind] + 1;
+    const labels = { w: 'Opened in a new tab', k: 'Sent to the back', m: 'Moved to ' + (target || ''), d: 'Dropped' };
+    this.setState({
+      prev: { queue: q, stats: this.state.stats },
+      queue: kind === 'k' ? rest.concat([cur]) : rest,
+      stats: stats,
+      last: { text: labels[kind], title: cur.title },
+      summary: false,
+      moveOpen: false
+    });
+  }
+  undo() {
+    const p = this.state.prev;
+    if (!p) return;
+    this.setState({ queue: p.queue, stats: p.stats, prev: null, last: null, summary: false, moveOpen: false });
+  }
+  jump(id) {
+    const q = this.state.queue;
+    const it = q.find((x) => x.id === id);
+    if (!it) return;
+    this.setState({ queue: [it].concat(q.filter((x) => x.id !== id)), summary: false, moveOpen: false });
+  }
+  renderVals() {
+    const accent = this.props.accent ?? '#9AA8FF';
+    const q = this.state.queue;
+    const s = this.state.stats;
+    const total = 5;
+    const processed = s.w + s.m + s.d;
+    const cur = q[0];
+    const pill = 'display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;';
+    const vstyle = {
+      'Worth it': pill + 'background:rgba(111,211,154,.14);color:#86DDAB',
+      'Skim it': pill + 'background:rgba(242,184,90,.14);color:#F2C27A',
+      'Skip': pill + 'background:#26282E;color:#A3A6B1'
+    };
+    return {
+      accent: accent,
+      hasCur: !!cur,
+      done: !cur,
+      cur: cur ? Object.assign({}, cur, {
+        thumbStyle: 'position:relative;aspect-ratio:16 / 9;max-width:100%;background:' + cur.tint + ';display:flex;align-items:center;justify-content:center',
+        verdictStyle: vstyle[cur.verdict]
+      }) : { points: [], stamps: [] },
+      summary: this.state.summary,
+      noSummary: !this.state.summary,
+      toggleSummary: () => this.setState({ summary: !this.state.summary }),
+      drop: () => this.decide('d'),
+      keep: () => this.decide('k'),
+      watch: () => this.decide('w'),
+      toggleMove: () => this.setState({ moveOpen: !this.state.moveOpen }),
+      moveOpen: this.state.moveOpen,
+      moveTargets: ['Programming', 'Fun', 'Long talks'].map((n) => ({ name: n, pick: () => this.decide('m', n) })),
+      upNext: q.slice(1, 6).map((u) => Object.assign({}, u, {
+        thumbStyle: 'flex:none;width:64px;height:36px;border-radius:6px;background:' + u.tint,
+        jump: () => this.jump(u.id)
+      })),
+      upNextEmpty: q.length === 1,
+      hasLast: !!this.state.last,
+      last: this.state.last || { text: '', title: '' },
+      undo: () => this.undo(),
+      stats: s,
+      remainingLabel: q.length + ' left · ' + processed + ' processed',
+      progressStyle: 'height:100%;width:' + Math.round(processed / total * 100) + '%;background:' + accent + ';border-radius:4px;transition:width .4s cubic-bezier(.2,.8,.2,1)',
+      doneLine: s.w + ' watched, ' + s.m + ' moved to other queues, ' + s.d + ' dropped as heat-of-the-moment.',
+      reset: () => this.setState({ queue: this.sample(), prev: null, last: null, summary: false, moveOpen: false, stats: { w: 0, k: 0, m: 0, d: 0 } })
+    };
+  }
+}
+</script>
+</body>
+</html>

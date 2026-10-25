@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Toolbar popup</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@500&amp;display=swap">
+<style>
+body{margin:0;background:#101114}
+a{color:#A3A6B1}a:hover{color:#ECEDF1}
+.btn{cursor:pointer;transition:transform .14s cubic-bezier(.2,.8,.2,1),background-color .16s ease,border-color .16s ease,filter .16s ease}
+.btn:active{transform:scale(.97)}
+.ghost:hover{background-color:#22242A !important;border-color:#363944 !important}
+.primary:hover{filter:brightness(1.07)}
+.qrow:hover{background-color:#1A1B20 !important}
+@media (prefers-reduced-motion:reduce){.btn{transition:none}}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #9AA8FF;outline-offset:2px}
+</style>
+</helmet>
+<div style="width:360px;height:560px;box-sizing:border-box;background:#141519;color:#ECEDF1;font-family:Geist,ui-sans-serif,system-ui,sans-serif;font-size:14px;line-height:1.5;display:flex;flex-direction:column;border:1px solid #24262C;border-radius:14px;overflow:hidden">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #1E2026">
+<div style="display:flex;align-items:center;gap:10px">
+<div style="width:24px;height:24px;border-radius:7px;background:{{accent}};display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#101114" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M3 4h10M3 8h10M3 12h6"></path></svg></div>
+<span style="font-weight:600">Queue</span>
+</div>
+<a href="Queues.dc.html" aria-label="Open full page" class="btn ghost" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px;border:1px solid transparent;color:#A3A6B1"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h4v4M13 3L7.5 8.5M12 9.5V13H3V4h3.5"></path></svg></a>
+</div>
+<div style="padding:16px;display:flex;flex-direction:column;gap:14px;flex:1 1 auto;min-height:0">
+<div style="padding:16px;border-radius:12px;background:#1A1B20;border:1px solid #26282E;display:flex;align-items:center;justify-content:space-between;gap:12px">
+<div>
+<p style="margin:0;font-size:12px;color:#8C8F9B;font-weight:500;letter-spacing:.06em;text-transform:uppercase">Inbox</p>
+<p style="margin:0;font-size:28px;font-weight:600;letter-spacing:-0.02em;font-variant-numeric:tabular-nums;line-height:1.2">23<span style="font-size:14px;font-weight:400;color:#A3A6B1;letter-spacing:0"> to sort</span></p>
+</div>
+<a href="Main.dc.html" class="btn primary" style="padding:9px 14px;border-radius:10px;background:{{accent}};color:#101114;text-decoration:none;font-weight:600">Process</a>
+</div>
+<ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px">
+<li><a href="Queues.dc.html" class="qrow" style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:9px;color:#ECEDF1;text-decoration:none"><span style="display:flex;align-items:center;gap:10px"><span style="width:9px;height:9px;border-radius:3px;background:{{accent}}"></span>Programming</span><span style="display:flex;align-items:center;gap:6px;color:#F2C27A;font-variant-numeric:tabular-nums"><span style="width:6px;height:6px;border-radius:50%;background:#F2B85A"></span>14</span></a></li>
+<li><a href="Queues.dc.html" class="qrow" style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:9px;color:#ECEDF1;text-decoration:none"><span style="display:flex;align-items:center;gap:10px"><span style="width:9px;height:9px;border-radius:3px;background:#E58FB8"></span>Fun</span><span style="color:#A3A6B1;font-variant-numeric:tabular-nums">8</span></a></li>
+<li><a href="Queues.dc.html" class="qrow" style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:9px;color:#ECEDF1;text-decoration:none"><span style="display:flex;align-items:center;gap:10px"><span style="width:9px;height:9px;border-radius:3px;background:#6FD3C4"></span>Long talks</span><span style="color:#A3A6B1;font-variant-numeric:tabular-nums">6</span></a></li>
+</ul>
+<div style="display:flex;flex-direction:column;gap:8px;margin-top:auto">
+<button class="btn ghost" style="height:44px;display:flex;align-items:center;gap:10px;padding:0 14px;border-radius:10px;border:1px solid #2A2C33;background:#1A1B20;color:#ECEDF1;font:inherit;font-weight:500;text-align:left"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.5v8M4.5 7L8 10.5 11.5 7M3 13.5h10"></path></svg>Queue this tab and close it</button>
+<button class="btn ghost" style="height:44px;display:flex;align-items:center;gap:10px;padding:0 14px;border-radius:10px;border:1px solid #2A2C33;background:#1A1B20;color:#ECEDF1;font:inherit;font-weight:500;text-align:left"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4.5h11v8h-11zM5 2.5h6"></path></svg><span style="flex:1 1 auto">Sweep open YouTube tabs</span><span style="font-size:12.5px;color:#A3A6B1;font-variant-numeric:tabular-nums">37</span></button>
+</div>
+</div>
+<div style="padding:12px 16px;border-top:1px solid #1E2026;display:flex;align-items:center;justify-content:space-between;gap:12px">
+<label for="intercept" style="display:flex;flex-direction:column;cursor:pointer"><span style="font-weight:500">Intercept new tabs</span><span style="font-size:12px;color:#8C8F9B">Shift + middle-click opens normally</span></label>
+<input id="intercept" type="checkbox" checked style="width:20px;height:20px;accent-color:{{accent}};cursor:pointer">
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#9AA8FF","options":["#9AA8FF","#F2A65A","#6FD3C4","#E58FB8"]},"$preview":{"width":360,"height":560}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { accent: this.props.accent ?? '#9AA8FF' };
+  }
+}
+</script>
+</body>
+</html>
