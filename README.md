@@ -2,6 +2,10 @@
 
 A browser extension for Firefox and Chrome: instead of opening interesting YouTube videos in new tabs that pile up, send them to pipelines and work through them later, one decision at a time.
 
+![Demo: middle-click a video to capture it, then process pipelines one card at a time](docs/demo.gif)
+
+[Video version (webm)](docs/demo.webm)
+
 - [docs/SPEC.md](docs/SPEC.md): the full spec
 - [prototypes/](prototypes/): UI mockups for the main screens
 
